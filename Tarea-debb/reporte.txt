@@ -1,0 +1,18 @@
+- En la función bar se remplazó el uso del entero sin signo por un entero en
+  valor absoluto, por lo que al usar enteros negativos los valores de la
+  variable c se iba para los undefined int más altos y, se hace la suposición,
+  esta no era la intensión sino que la intensión era obtener el valor numérico
+  sin signo.
+- La función foo contiene tres divisiones entonces se introduce un condicional
+  para que no se realicen divisiones por cero.
+- Debido a que el lenguaje trunca las divisiones de númeroS enteros, se cambiaron
+  los valores enteros, cuyo objetivo era ser usados en divisiones, por variables
+  de tipo double.
+- Para la función baz la variable v originalmente no se usaba, se entiendió que
+  la idea era sumarle y restarle uno al valor ingresado en la función y sacarle
+  raíz cuadrada, por lo que se usa ese valor en la raíz en lugar del x.
+- se entiende que el objetivo es conocer los valores obtenidos al remplazar los
+  valores dados en las funciones, por lo que se imprimen en la pantalla mediante
+  iostream.
+- Se ha cambiado el signo de la variable x al interior de la función baz debido
+  a que estaba con signo negativo.
