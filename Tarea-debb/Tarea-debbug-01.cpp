@@ -6,7 +6,7 @@ int foo(int a, int b);
 int bar(int a, int b);
 double baz(double x);
 void print_array(const double data[], const int & size);
-void inicialized_array(double data[], const int & size);
+void initialized_array(double data[], const int & size);
 
 int main (int argc, char **argv)
 {
@@ -21,7 +21,7 @@ int main (int argc, char **argv)
   const int NX = 2, NY = 3, NZ = 4;
   double *x=nullptr, y[NY] ={0}, z[NZ]={0};
   x = new double [NX];
-  inicialized_array(x, NX);
+  initialized_array(x, NX);
 
   print_array(x, NX);
   print_array(y, NY);
@@ -84,7 +84,7 @@ void print_array(const double data[], const int & size)
   }
 }
 
-void inicialized_array(double data[], const int & size)
+void initialized_array(double data[], const int & size)
 {
     for (int ii=0; ii < size; ++ii)
     {

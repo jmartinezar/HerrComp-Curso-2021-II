@@ -2,7 +2,7 @@
   inicializadas, además después de esta línea ninguna de las dos se usa y la
   última directamente no se usa nunca, por lo que se decide eliminar esta línea.
 - En la función baz, después del if, la condición no retorna nada, según como se
-  ve, la función busca calcular la raíz de un valor sumándole y restándoles 1,
+  ve, la función busca calcular la raíz de un valor sumándole y restándole 1,
   buscando algo en específico que desconozco, se presume precisión; dado esto,
   se elige el término 0 para retornar.
 - En la misma función y en el if, se asume que se quiere ingresar al if si el
@@ -43,3 +43,10 @@
   genera una fuga, esto es corregido liberando la memoria.
 - El arreglo x no fue inicializado después de expresarlo como un arreglo, por lo
   que se creó una función para inicializarlo y se llamó.
+
+
+- Los arreglos se declaran, primero x como un puntero inicializado nulo, después
+  y y z inicializados con todos sus valores en cero, estos tres componentes
+  están localizados en stack, primero z y después y, no se garantiza la
+  continuidad, por otro lado, cuando se pide memoria para que x apunte a un
+  arreglo, x apunta a un arreglo ubicado en heap.
