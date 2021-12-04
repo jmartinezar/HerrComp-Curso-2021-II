@@ -1,22 +1,23 @@
 //Queremos que dada una copa m*m la distribución inicial sea un cuadrado (m/10)*(m/10) centrado en la copa
 //
+#include <cmath>
 #include <random>
 #include <iostream>
 #include <vector>
 
-void initial_distribution_array (int Nmol, int size, int ratio, int * vector, int seed);// int * vector?
-void step (int Nmol, int size, int * vector, int seed);
-void prototype(int Nmol, int size,  double prop, std::vector<int> & vector);
-void print_vector(int size, const std::vector<int> & vector);
-int particle_mov(int Nmol, int size, int seed, std::vector<int> & vector);//esta función elige al azar la partícula que se va a mover
-int step_int(int Nmol, int size, int seed, std::vector<int> & vector);//esta función mueve al azar la partícula en cualquier dirección o la deja quieta
+void prototype(int Nmol, int size,  double prop, std::vector<int> & vector);//esta función pone las partículas en su arreglo inicial
+void print_vector(int size, const std::vector<int> & vector);//esta función imprime el vector en pantalla en forma de matriz
+int particle_mov(int Nmol, int size, int Nstep, int seed, std::vector<int> & vector);//esta función elige al azar la partícula que se va a mover
+void step_int(int Nmol, int size, int Nstep, int seed, std::vector<int> & vector);//esta función mueve al azar la partícula en cualquier dirección o la deja quieta
+double entropia(int Nmol, int size, const std::vector<int> & vector);//esta funcion calcula la entropia de la copa
 
-int main(int argc, char *argv[])
+int main(void)
 {
-    //const int N = 10;
     const int Part = 20;//numero de particulas
     const int size = 20;//tamaño de la matriz
     const double prop = 0.1;//proporcion entre el cuadrado del centro y la matriz
+    const int seed = 3; //semilla del generador de numeros aleatorios
+    const int Nstep = 1000; //numero de pasos del sistema
 
     std::vector<int> particles{0}; //inicializa el vector
     particles.resize(size*size);//poner el tamaño del vector
@@ -24,60 +25,10 @@ int main(int argc, char *argv[])
     prototype(Part, size, prop, particles);
     std::cout << "Aquí se llena\n";//se pone para diferenciar en la consola las dos matrices
     print_vector(size, particles);//se imprime despues de ser llenado
-/*
-    int seed = 0;
-    double mu=0, sigma=0.5;
-
-    std::vector<int> particles{0}; //inicializa el vector
-
-    std::mt19937 gen(seed);
-    std::uniform_real_distribution<> dis{0,1};
-    for (int i=0; i<N; i++){
-	    std::cout<<dis(gen)<<std::endl;
-    }*/
+    std::cout << 0 << "\t" <<  entropia(Part, size, particles) << "\n";
+    step_int(Part, size, Nstep, seed, particles);
 
     return 0;
-}
-
-void initial_distribution_array (int Nmol, int size, int ratio, int * vector, int seed)
-{
-    int init_size = size/ratio;
-
-    std::mt19937 gen(seed); //OJO: de pronto se generan los numeros aleatorios 2 veces
-    std::uniform_int_distribution<> dis{0, init_size};
-
-    for (int n=0; n<Nmol; n++){
-	int i=0,j=0;
-	i = size/2 -init_size/2 + dis(gen);
-	j = size/2 -init_size/2 + dis(gen);
-        vector[n] = i*size + j;
-    }
-}
-
-void step (int Nmol, int size, int * vector, int seed)
-{
-    std::mt19937 gen(seed); //OJO: de pronto se generan los numeros aleatorios 3 veces
-    std::uniform_int_distribution<> dis{0, Nmol -1};
-    int mol = dis(gen);
-    std::uniform_int_distribution<> dis{0, 4};
-    int paso = dis(gen);
-    int aqui = vector[mol]; //aqui es la posicion de la particula. reemplazar aqui por vector[mol] donde se usa en los if
-    if (paso==1) {
-	if (vector[mol]/size != 0) vector[mol] += -size;//arriba
-	else vector[mol] += (size-1)*size; //se teletransporta hacia la pared de abajo
-    }
-    if (paso==2) {
-	if (vector[mol]/size != size-1) vector[mol] += size;//abajo
-	else vector[mol] = vector[mol] % size;//se teletransporta hacia la pared de arriba
-    }
-    if (paso==3) {
-	if (vector[mol] % size != 0) vector[mol] += -1;//izquierda camarada
-	else vector[mol] += size -1;//se teletransporta hacia la pared derecha
-    }
-    if (paso==4) {
-	if (aqui % size != size-1)  vector[mol] += 1;//le voy a dar en la cara marica
-	else vector[mol] = aqui/size; //se teletransporta hacia la pared izquierda
-    }
 }
 
 void prototype(int Nmol, int size, double prop, std::vector<int> & vector)
@@ -115,17 +66,21 @@ void print_vector(int size, const std::vector<int> & vector)
     }
 }
 
-int particle_mov(int Nmol, int size, int seed, std::vector<int> & vector)
+int particle_mov(int Nmol, int size, int Nstep, int seed, std::vector<int> & vector)
 {
     std::mt19937 gen(seed);
     std::uniform_int_distribution<> dis{1, Nmol};
-    int counter = dis(gen);//si se ordenan las moléculas en fila, la molécula que tenga el número de posición del contador es la que se va a mover
+    int counter = 0;
+    for(int ii = 1; ii <= Nstep; ++ii)
+    {
+        counter = dis(gen);
+    }
     for(int ii = 0; ii<size; ++ii)//bucle para recorrer las filas de la matriz
     {
         for(int jj = 0; jj<size; ++jj)//bucle para recorres las columnas
         {
             counter -= vector[ii*size+jj];//por cada partícula que haya, el contador se reduce en 1
-            if(counter == 0)// cuando el contador es cero es porque la posición en la que se encuentra el barrido de la matriz es la de la molécula que toca mover
+            if(counter <= 0)// cuando el contador es cero es porque la posición en la que se encuentra el barrido de la matriz es la de la molécula que toca mover
             {
                 return ii*size + jj;// la función retorna la posición de la molécula que toca mover
             }
@@ -133,62 +88,87 @@ int particle_mov(int Nmol, int size, int seed, std::vector<int> & vector)
     }
 }
 
-int step_int(int Nmol, int size, int seed, std::vector<int> & vector)
+void step_int(int Nmol, int size, int Nstep,  int seed, std::vector<int> & vector)
 {
-    int part = particle_mov(Nmol, size, seed, vector);
+    int part = 0;
     std::mt19937 gen(seed);
-    std::uniform_int_distribution<> dis{1, 4};
-    int lado = dis(gen);//se genera un número aleatorio que determina para qué lado se mueve la partícula 1 es arriba, 2 es abajo, 3 es derecha y 4 es izquierda
-    if(lado == 1)//si es 1 indica que se va a mover hacia arriba
+    std::uniform_int_distribution<> dis{1, 5};
+    int lado = 0;
+    for(int ii = 1; ii <= Nstep; ++ii)
     {
-        if((part - size + 1) <= 0)//si la partícula se encuentra en la primera fila
+        part = particle_mov(Nmol, size, ii, seed,  vector);
+        lado = dis(gen);//se genera un número aleatorio que determina para qué lado se mueve la partícula 1 es arriba, 2 es abajo, 3 es derecha y 4 es izquierda
+        if(lado == 1)//si es 1 indica que se va a mover hacia arriba
         {
-            vector[part] -= 1;//la retira de la fila en la que está
-            vector[size*(size-1) + part] += 1;//la pone en la misma columna pero en la última fila
+            if((part - size + 1) <= 0)//si la partícula se encuentra en la primera fila
+            {
+                vector[part] -= 1;//la retira de la fila en la que está
+                vector[size*(size-1) + part] += 1;//la pone en la misma columna pero en la última fila
+            }
+            else//si no está en la última fila
+            {
+                vector[part] -= 1;//la retira de la fila en la que está
+                vector[part - size] += 1;//la pone en la misma columna pero en la fila de arriba
+            }
         }
-        else//si no está en la última fila
+        else if(lado == 2)
         {
-            vector[part] -= 1;//la retira de la fila en la que está
-            vector[part - size] += 1;//la pone en la misma columna pero en la fila de arriba
+            if(part/size == (size - 1))//si la partícula se encuentra en la última fila
+            {
+                vector[part]-=1;//la retira de la fila en la que está
+                vector[part - size*(size-1)] += 1;//la pone en la misma columna pero en la primera fila
+            }
+            else//si no está en la última fila
+            {
+                vector[part] -= 1;//la retir de donde está
+                vector[part + size] += 1;//la pone en la misma columna pero en la fila de abajo
+            }
+        }
+        else if(lado == 3)
+        {
+            if(part%size == 0)//si la partícula está en la primera columna
+            {
+                vector[part] -= 1;//la retira de donde está
+                vector[part + size - 1] += 1;//la pone en la misma fila pero al otro lado de la copa
+            }
+            else//si no
+            {
+                vector[part] -= 1;//la retira de donde está
+                vector[part - 1] += 1;//la pone a la derecha
+            }
+        }
+        else if(lado == 4)
+        {
+            if((part - size +1)%size == 0)//si está en la última columna
+            {
+                vector[part] -= 1;//la retira de donde está
+                vector[part -size + 1] += 1;//la pone en la misma fila pero al otro lado de la copa
+            }
+            else//si no
+            {
+                vector[part] -= 1;//la retira de donde está
+                vector[part + 1] += 1;//la pone a la izquierda
+            }
+        }
+        std::cout << ii << "\t" << entropia(Nmol, size, vector) << "\n";
+    }
+}
+
+double entropia(int Nmol, int size, const std::vector<int> & vector)
+{
+    double sum = 0.0;
+    double aux = 0.0;
+    double auxN = Nmol;
+    for(int ii = 0; ii < size; ++ii)
+    {
+        for(int jj = 0; jj < size; ++jj )
+        {
+            if(vector[ii*size + jj] != 0)
+            {
+                aux = vector[ii*size + jj];
+                sum += (aux/auxN)*std::log(aux/auxN);
+            }
         }
     }
-    else if(lado == 2)
-    {
-        if(part/size == (size - 1))//si la partícula se encuentra en la última fila
-        {
-            vector[part]-=1;//la retira de la fila en la que está
-            vector[part - size*(size-1)] += 1;//la pone en la misma columna pero en la primera fila
-        }
-        else//si no está en la última fila
-        {
-            vector[part] -= 1;//la retir de donde está
-            vector[part + size] += 1;//la pone en la misma columna pero en la fila de abajo
-        }
-    }
-    else if(lado == 3)
-    {
-        if(part%size == 0)//si la partícula está en la primera columna
-        {
-            vector[part] -= 1;//la retira de donde está
-            vector[part + size - 1] += 1;//la pone en la misma fila pero al otro lado de la copa
-        }
-        else//si no
-        {
-            vector[part] -= 1;//la retira de donde está
-            vector[part - 1] += 1;//la pone a la derecha
-        }
-    }
-    else if(lado == 4)
-    {
-        if((part - size +1)%size == 0)//si está en la última columna
-        {
-            vector[part] -= 1;//la retira de donde está
-            vector[part -size + 1] += 1;//la pone en la misma fila pero al otro lado de la copa
-        }
-        else//si no
-        {
-            vector[part] -= 1;//la retira de donde está
-            vector[part + 1] += 1;//la pone a la izquierda
-        }
-    }
+    return -sum;
 }
