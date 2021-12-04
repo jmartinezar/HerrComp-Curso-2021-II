@@ -124,7 +124,7 @@ int particle_mov(int Nmol, int size, int seed, std::vector<int> & vector)
     {
         for(int jj = 0; jj<size; ++jj)//bucle para recorres las columnas
         {
-            counter -= vector[ii*size+jj];//por cada partícula que halla, el contador se reduce en 1
+            counter -= vector[ii*size+jj];//por cada partícula que haya, el contador se reduce en 1
             if(counter == 0)// cuando el contador es cero es porque la posición en la que se encuentra el barrido de la matriz es la de la molécula que toca mover
             {
                 return ii*size + jj;// la función retorna la posición de la molécula que toca mover
