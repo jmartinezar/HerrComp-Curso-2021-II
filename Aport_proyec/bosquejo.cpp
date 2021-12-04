@@ -1,6 +1,6 @@
 //Queremos que dada una copa m*m la distribución inicial sea un cuadrado (m/10)*(m/10) centrado en la copa
 //
-#include <ifstream>
+#include <fstream>
 #include <cmath>
 #include <random>
 #include <iostream>
@@ -14,10 +14,10 @@ double entropia(int Nmol, int size, const std::vector<int> & vector);//esta func
 
 int main(void)
 {
-    const int Nmol = 0;//numero de particulas
-    const int size = 0;//tamaño de la matriz
-    const int seed = 0; //semilla del generador de numeros aleatorios
-    const int Nstep = 0; //numero de pasos del sistema
+    int Nmol = 0;//numero de particulas
+    int size = 0;//tamaño de la matriz
+    int seed = 0; //semilla del generador de numeros aleatorios
+    int Nstep = 0; //numero de pasos del sistema
     const double prop = 0.1;//proporcion entre el cuadrado del centro y la matriz
 
     std::ifstream file;
