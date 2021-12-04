@@ -1,5 +1,6 @@
 //Queremos que dada una copa m*m la distribución inicial sea un cuadrado (m/10)*(m/10) centrado en la copa
 //
+#include <ifstream>
 #include <cmath>
 #include <random>
 #include <iostream>
@@ -13,20 +14,22 @@ double entropia(int Nmol, int size, const std::vector<int> & vector);//esta func
 
 int main(void)
 {
-    const int Part = 20;//numero de particulas
-    const int size = 20;//tamaño de la matriz
+    const int Nmol = 0;//numero de particulas
+    const int size = 0;//tamaño de la matriz
+    const int seed = 0; //semilla del generador de numeros aleatorios
+    const int Nstep = 0; //numero de pasos del sistema
     const double prop = 0.1;//proporcion entre el cuadrado del centro y la matriz
-    const int seed = 3; //semilla del generador de numeros aleatorios
-    const int Nstep = 1000; //numero de pasos del sistema
+
+    std::ifstream file;
+    file.open("input.txt");
+    file >> Nmol >> size >> Nstep >> seed;
+    file.close();
 
     std::vector<int> particles{0}; //inicializa el vector
     particles.resize(size*size);//poner el tamaño del vector
-    print_vector(size, particles);//se imprime el vector antes de llenarlo
-    prototype(Part, size, prop, particles);
-    std::cout << "Aquí se llena\n";//se pone para diferenciar en la consola las dos matrices
-    print_vector(size, particles);//se imprime despues de ser llenado
-    std::cout << 0 << "\t" <<  entropia(Part, size, particles) << "\n";
-    step_int(Part, size, Nstep, seed, particles);
+    prototype(Nmol, size, prop, particles);
+    std::cout << 0 << "\t" <<  entropia(Nmol, size, particles) << "\n";
+    step_int(Nmol, size, Nstep, seed, particles);
 
     return 0;
 }
