@@ -8,6 +8,8 @@ void initial_distribution_array (int Nmol, int size, int ratio, int * vector, in
 void step (int Nmol, int size, int * vector, int seed);
 void prototype(int Nmol, int size,  double prop, std::vector<int> & vector);
 void print_vector(int size, const std::vector<int> & vector);
+int particle_mov(int Nmol, int size, int seed, std::vector<int> & vector);//esta función elige al azar la partícula que se va a mover
+int step_int(int Nmol, int size, int seed, std::vector<int> & vector);//esta función mueve al azar la partícula en cualquier dirección o la deja quieta
 
 int main(int argc, char *argv[])
 {
@@ -110,5 +112,82 @@ void print_vector(int size, const std::vector<int> & vector)
             std::cout << vector[ii*size+jj] << "\t";
         }
         std::cout << "\n";
+    }
+}
+
+int particle_mov(int Nmol, int size, int seed, std::vector<int> & vector)
+{
+    std::mt19937 gen(seed);
+    std::uniform_int_distribution<> dis{1, Nmol};
+    int counter = dis(gen);//si se ordenan las moléculas en fila, la molécula que tenga el número de posición del contador es la que se va a mover
+    for(int ii = 0; ii<size; ++ii)//bucle para recorrer las filas de la matriz
+    {
+        for(int jj = 0; jj<size; ++jj)//bucle para recorres las columnas
+        {
+            counter -= vector[ii*size+jj];//por cada partícula que halla, el contador se reduce en 1
+            if(counter == 0)// cuando el contador es cero es porque la posición en la que se encuentra el barrido de la matriz es la de la molécula que toca mover
+            {
+                return ii*size + jj;// la función retorna la posición de la molécula que toca mover
+            }
+        }
+    }
+}
+
+int step_int(int Nmol, int size, int seed, std::vector<int> & vector)
+{
+    std::mt19937 gen(seed);
+    std::uniform_int_distribution<> dis{1, 4};
+    int lado = dis(gen);//se genera un número aleatorio que determina para qué lado se mueve la partícula 1 es arriba, 2 es abajo, 3 es derecha y 4 es izquierda
+    if(lado == 1)//si es 1 indica que se va a mover hacia arriba
+    {
+        if((particle_mov(Nmol, size, seed, vector) - size + 1) <= 0)//si la partícula se encuentra en la primera fila
+        {
+            vector[particle_mov(Nmol, size, seed, vector)] -= 1;//la retira de la fila en la que está
+            vector[size*(size-1) + particle_mov(Nmol, size, seed, vector)] += 1;//la pone en la misma columna pero en la última fila
+        }
+        else//si no está en la última fila
+        {
+            vector[particle_mov(Nmol, size, seed, vector)] -= 1;//la retira de la fila en la que está
+            vector[particle_mov(Nmol, size, seed, vector) - size] += 1;//la pone en la misma columna pero en la fila de arriba
+        }
+    }
+    else if(lado == 2)
+    {
+        if(particle_mov(Nmol, size, seed, vector)/size == (size - 1))//si la partícula se encuentra en la última fila
+        {
+            vector[particle_mov(Nmol, size, seed, vector)]-=1;//la retira de la fila en la que está
+            vector[particle_mov(Nmol, size, seed, vector)- size*(size-1)]+=1;//la pone en la misma columna pero en la primera fila
+        }
+        else//si no está en la última fila
+        {
+            vector[particle_mov(Nmol, size, seed, vector)] -= 1;//la retir de donde está
+            vector[particle_mov(Nmol, size, seed, vector)+size] += 1;//la pone en la misma columna pero en la fila de abajo
+        }
+    }
+    else if(lado ==3)
+    {
+        if(particle_mov(Nmol, size, seed, vector)%size == 0)//si la partícula está en la primera columna
+        {
+            vector[particle_mov(Nmol, size, seed, vector)] -= 1;//la retira de donde está
+            vector[particle_mov(Nmol, size, seed, vector) + size - 1] += 1;//la pone en la misma fila pero al otro lado de la copa
+        }
+        else//si no
+        {
+            vector[particle_mov(Nmol, size, seed, vector)] -= 1;//la retira de donde está
+            vector[particle_mov(Nmol, size, seed, vector) - 1] += 1;//la pone a la derecha
+        }
+    }
+    else if(lado == 4)
+    {
+        if((particle_mov(Nmol, size, seed, vector) - size +1)%size == 0)//si está en la última columna
+        {
+            vector[particle_mov(Nmol, size, seed, vector)] -= 1;//la retira de donde está
+            vector[particle_mov(Nmol, size, seed, vector) -size + 1] += 1;//la pone en la misma fila pero al otro lado de la copa
+        }
+        else//si no
+        {
+            vector[particle_mov(Nmol, size, seed, vector)] -= 1;//la retira de donde está
+            vector[particle_mov(Nmol, size, seed, vector) + 1] += 1;//la pone a la izquierda
+        }
     }
 }
