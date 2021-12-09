@@ -1,0 +1,52 @@
+- En la línea 23 hay inicializadas tres variables de las cuales dos ya estaban
+  inicializadas, además después de esta línea ninguna de las dos se usa y la
+  última directamente no se usa nunca, por lo que se decide eliminar esta línea.
+- En la función baz, después del if, la condición no retorna nada, según como se
+  ve, la función busca calcular la raíz de un valor sumándole y restándole 1,
+  buscando algo en específico que desconozco, se presume precisión; dado esto,
+  se elige el término 0 para retornar.
+- En la misma función y en el if, se asume que se quiere ingresar al if si el
+  valor de x es igual a cero, por lo que el '=' se cambia por un '=='.
+- Aún por lo mismo, en la raíz se ingresa el valor de v en lugar del de x,
+  adicional a esto el valor de v no se usaba en el código original. También se
+  ingresa la parte del v en un else, aun sin saber si así dé lo mismo, se busca
+  ser más explícito.
+- También en principio la raíz no tenía un ';' terminando la línea, por lo que
+  se le agregó.
+- En la función foo se hacen tres divisiones, por lo que se debe garantizar que
+  los valores en el denominador sean siempre diferentes de cero, por esto, se
+  usa un condicional, en caso que no se cumpla esto, se retornará '0'.
+- En el primer for de la función main, se asume que se busca barrer todos los
+  elementos del arreglo, por lo que ese 'jj' es un error y es remplazado por
+  'ii'.
+- En la función main cuando se declaran los arreglos no se inicializan, por lo
+  que esto se corrige inicializándolos en cero. El puntero se inicializa nulo.
+- Como se imprimen los tres arreglos y después se cambian los valores de uno de
+  ellos, se piensa que el objetivo es mostrar los valores de ellos después de
+  haber alterado uno, o sea, que el primero ha cambiado en tanto los demás no.
+  Primero, el valor ingresado para el tamaño de x en este caso sería erroneo,
+  por lo que se cambia por su valor adecuado. Algo similar sucede con la
+  reimpresión del arreglo z.
+- Para el siguiente for en la función main, se asume que se quiso asignar el
+  valor que contenía la varible ii a todos los valores en x, pero en dado punto
+  se sale de la memoria de x, por lo que se usa un condicional que evita esto.
+- Luego de modificar algunos arreglos en el for, se imprimen nuevamente. Hay
+  unas sumas en el espacio en donde debe ir el nombre de un arreglo, por lo que
+  se entiende esto como un error y se eliminan estos factores dejando solo los
+  nombres de los arreglos. En el caso del arreglo x, se puso como tamaño el
+  tamaño del arreglo y, que es más grande, por lo que se sale, con lo que es
+  remplazado por su tamaño para evitar esto. Si bien el arreglo z tiene el
+  tamaño de x y esto no causa ningún error pues es más pequeño, se asume una
+  secuencia de reimprimir los tres arreglos por lo que el tamaño es remplazado
+  por el suyo propio.
+- Para el caso de x, su memoria no es liberada en ningún punto, por lo que
+  genera una fuga, esto es corregido liberando la memoria.
+- El arreglo x no fue inicializado después de expresarlo como un arreglo, por lo
+  que se creó una función para inicializarlo y se llamó.
+
+
+- Los arreglos se declaran, primero x como un puntero inicializado nulo, después
+  y y z inicializados con todos sus valores en cero, estos tres componentes
+  están localizados en stack, primero z y después y, no se garantiza la
+  continuidad, por otro lado, cuando se pide memoria para que x apunte a un
+  arreglo, x apunta a un arreglo ubicado en heap.
